@@ -1,112 +1,110 @@
-//handlers/facts.go
-
 package handlers
 
 import (
 	"github.com/diana-yelemes/digital_library/database"
 	"github.com/diana-yelemes/digital_library/models"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-func getAllBooks(c *fiber.Ctx) {
+func GetAllBooks(c *fiber.Ctx) error {
 	var books []models.Book
 	database.DB.Db.Find(&books)
-	c.JSON(books)
+	return c.JSON(books)
 }
 
-func getBookDetails(c *fiber.Ctx) {
+func GetBookDetails(c *fiber.Ctx) error {
 	bookID := c.Params("bookID")
 	var book models.Book
 	result := database.DB.Db.First(&book, bookID)
 	if result.Error != nil {
-		c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
-		return
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
 	}
-	c.JSON(book)
+	return c.JSON(book)
 }
 
-func markAsCurrentlyReading(c *fiber.Ctx) {
-	// Implement logic to mark a book as "Currently Reading" in the database
+func MarkAsCurrentlyReading(c *fiber.Ctx) error {
+	return markBookStatus(c, "currently reading")
 }
 
-func markAsRead(c *fiber.Ctx) {
-	// Implement logic to mark a book as "Read" in the database
+func MarkAsRead(c *fiber.Ctx) error {
+	return markBookStatus(c, "read")
 }
 
-func markAsDidNotFinish(c *fiber.Ctx) {
-	// Implement logic to mark a book as "Did Not Finish" in the database
+func MarkAsDidNotFinish(c *fiber.Ctx) error {
+	return markBookStatus(c, "did not finish")
 }
 
-func markAsToBeRead(c *fiber.Ctx) {
-	// Implement logic to mark a book as "To Be Read" in the database
+func MarkAsToBeRead(c *fiber.Ctx) error {
+	return markBookStatus(c, "to read")
 }
 
-func getCurrentlyReadingList(c *fiber.Ctx) {
-	var currentlyReadingBooks []models.Book
-	database.DB.Db.Where("status = ?", "currently reading").Find(&currentlyReadingBooks)
-	c.JSON(currentlyReadingBooks)
+func markBookStatus(c *fiber.Ctx, status string) error {
+	// Implement logic to mark a book with the specified status in the database
+	return nil
 }
 
-func getReadBooksList(c *fiber.Ctx) {
-	var readBooks []models.Book
-	database.DB.Db.Where("status = ?", "read").Find(&readBooks)
-	c.JSON(readBooks)
+func getBooksByStatus(c *fiber.Ctx, status string) error {
+	var books []models.Book
+	database.DB.Db.Where("status = ?", status).Find(&books)
+	return c.JSON(books)
 }
 
-func getDidNotFinishList(c *fiber.Ctx) {
-	var didNotFinishBooks []models.Book
-	database.DB.Db.Where("status = ?", "did not finish").Find(&didNotFinishBooks)
-	c.JSON(didNotFinishBooks)
+func GetCurrentlyReadingList(c *fiber.Ctx) error {
+	return getBooksByStatus(c, "currently reading")
 }
 
-func getToBeReadList(c *fiber.Ctx) {
-	var toBeReadBooks []models.Book
-	database.DB.Db.Where("status = ?", "to read").Find(&toBeReadBooks)
-	c.JSON(toBeReadBooks)
+func GetReadBooksList(c *fiber.Ctx) error {
+	return getBooksByStatus(c, "read")
 }
 
-func addNewBook(c *fiber.Ctx) {
+func GetDidNotFinishList(c *fiber.Ctx) error {
+	return getBooksByStatus(c, "did not finish")
+}
+
+func GetToBeReadList(c *fiber.Ctx) error {
+	return getBooksByStatus(c, "to read")
+}
+
+func AddNewBook(c *fiber.Ctx) error {
 	var newBook models.Book
 	if err := c.BodyParser(&newBook); err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
-		return
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
 	}
 
 	database.DB.Db.Create(&newBook)
-	c.JSON(newBook)
+	return c.JSON(newBook)
 }
 
-func updateBookDetails(c *fiber.Ctx) {
+func UpdateBookDetails(c *fiber.Ctx) error {
 	bookID := c.Params("bookID")
 	var updatedBook models.Book
 	if err := c.BodyParser(&updatedBook); err != nil {
-		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
-		return
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request payload"})
 	}
 
 	result := database.DB.Db.Model(&models.Book{}).Where("id = ?", bookID).Updates(&updatedBook)
 	if result.Error != nil || result.RowsAffected == 0 {
-		c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
-		return
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
 	}
 
 	c.SendStatus(fiber.StatusNoContent)
+	return nil
 }
 
-func deleteBook(c *fiber.Ctx) {
+func DeleteBook(c *fiber.Ctx) error {
 	bookID := c.Params("bookID")
 	result := database.DB.Db.Delete(&models.Book{}, bookID)
 	if result.Error != nil || result.RowsAffected == 0 {
-		c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
-		return
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
 	}
 
 	c.SendStatus(fiber.StatusNoContent)
+	return nil
 }
 
-func searchBooks(c *fiber.Ctx) {
+func SearchBooks(c *fiber.Ctx) error {
 	query := c.Query("q")
 	var searchResults []models.Book
 	database.DB.Db.Where("title LIKE ? OR author LIKE ?", "%"+query+"%", "%"+query+"%").Find(&searchResults)
-	c.JSON(searchResults)
+	return c.JSON(searchResults)
 }

@@ -1,12 +1,13 @@
-// cmd/routes.go
+// routes/routes.go
 
-package main
+package routes
 
 import (
-	"github.com/gofiber/fiber"
+	"github.com/diana-yelemes/digital_library/handlers"
+	"github.com/gofiber/fiber/v2"
 )
 
-func setupRoutes(app *fiber.App) {
+func SetupRoutes(app *fiber.App) {
 	// Get All Books
 	app.Get("/api/books", handlers.GetAllBooks)
 
