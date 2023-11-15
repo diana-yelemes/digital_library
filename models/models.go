@@ -1,11 +1,14 @@
+//models/models.go
+
 package models
 
 import "gorm.io/gorm"
 
-type Fact struct {
+type Book struct {
 	gorm.Model
-
-	Question string `json:"question" gorm:"text;not null;default:null`
-
-	Answer string `json:"answer" gorm:"text;not null;default:null`
+	ID          uint   `gorm:"primaryKey" json:"id"`
+	Title       string `json:"title"`
+	Author      string `json:"author"`
+	Description string `json:"description"`
+	Status      string `json:"status"` // "read", "to read", "currently reading", "did not finish"
 }
