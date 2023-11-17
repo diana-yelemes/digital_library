@@ -1,4 +1,4 @@
-// routes/routes.go
+// cmd/routes.go
 
 package routes
 

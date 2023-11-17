@@ -39,8 +39,22 @@ func MarkAsToBeRead(c *fiber.Ctx) error {
 }
 
 func markBookStatus(c *fiber.Ctx, status string) error {
-	// Implement logic to mark a book with the specified status in the database
-	return nil
+	// Get bookID from params
+	bookID := c.Params("bookID")
+
+	// Retrieve the book from the database
+	var book models.Book
+	result := database.DB.Db.First(&book, bookID)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
+	}
+
+	// Update the book status
+	book.Status = status
+	database.DB.Db.Save(&book)
+
+	// Return the updated book
+	return c.JSON(book)
 }
 
 func getBooksByStatus(c *fiber.Ctx, status string) error {
@@ -88,7 +102,7 @@ func UpdateBookDetails(c *fiber.Ctx) error {
 	}
 
 	c.SendStatus(fiber.StatusNoContent)
-	return nil
+	return c.JSON(updatedBook)
 }
 
 func DeleteBook(c *fiber.Ctx) error {
@@ -99,12 +113,17 @@ func DeleteBook(c *fiber.Ctx) error {
 	}
 
 	c.SendStatus(fiber.StatusNoContent)
-	return nil
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book was deleted"})
 }
 
 func SearchBooks(c *fiber.Ctx) error {
 	query := c.Query("q")
 	var searchResults []models.Book
-	database.DB.Db.Where("title LIKE ? OR author LIKE ?", "%"+query+"%", "%"+query+"%").Find(&searchResults)
+	result := database.DB.Db.Where("SELECT * FROM books WHERE Title ILIKE ? OR Author ILIKE ?", "%"+query+"%", "%"+query+"%").Scan(&searchResults)
+
+	if result.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
 	return c.JSON(searchResults)
 }
