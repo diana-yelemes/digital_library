@@ -12,40 +12,40 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/", handlers.GetAllBooks)
 
 	// Get Book Details
-	app.Get("/books/:bookID", handlers.GetBookDetails)
+	app.Get("/api/books/:bookID", handlers.GetBookDetails)
 
 	// Mark as Currently Reading
-	app.Post("/books/:bookID/currently-reading", handlers.MarkAsCurrentlyReading)
+	app.Post("/api/books/:bookID/currently-reading", handlers.MarkAsCurrentlyReading)
 
 	// Mark as Read
-	app.Post("/books/:bookID/mark-as-read", handlers.MarkAsRead)
+	app.Post("/api/books/:bookID/mark-as-read", handlers.MarkAsRead)
 
 	// Mark as Did Not Finish
-	app.Post("/books/:bookID/did-not-finish", handlers.MarkAsDidNotFinish)
+	app.Post("/api/books/:bookID/did-not-finish", handlers.MarkAsDidNotFinish)
 
 	// Mark as To Be Read
-	app.Post("/books/:bookID/to-be-read", handlers.MarkAsToBeRead)
+	app.Post("/api/books/:bookID/to-be-read", handlers.MarkAsToBeRead)
 
 	// Get Currently Reading List
-	app.Get("/books/currently-reading-books", handlers.GetCurrentlyReadingList)
+	app.Get("/api/books/currently-reading-books", handlers.GetCurrentlyReadingList)
 
 	// Get Read Books List
-	app.Get("/books/read-books", handlers.GetReadBooksList)
+	app.Get("/api/books/read-books", handlers.GetReadBooksList)
 
 	// Get Did Not Finish List
-	app.Get("/books/did-not-finish-books", handlers.GetDidNotFinishList)
+	app.Get("/api/books/did-not-finish-books", handlers.GetDidNotFinishList)
 
 	// Get To Be Read List
-	app.Get("/books/to-be-read-books", handlers.GetToBeReadList)
+	app.Get("/api/books/to-be-read-books", handlers.GetToBeReadList)
 
 	// Add New Book
 	app.Post("/book", handlers.AddNewBook)
 
 	// Update Book Details
-	app.Put("/books/:bookID", handlers.UpdateBookDetails)
+	app.Put("/api/books/:bookID", handlers.UpdateBookDetails)
 
 	// Delete Book
-	app.Delete("/books/:bookID", handlers.DeleteBook)
+	app.Delete("/api/books/:bookID", handlers.DeleteBook)
 
 	//Add New Book View
 	app.Get("/book", handlers.NewBookView)

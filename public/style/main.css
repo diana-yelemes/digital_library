@@ -1,4 +1,15 @@
 /*public/style/main.css*/
 body {
-    background-color: #d7e7db
+    color: #220e07;
+    background-color:#f2efed;
+}
+img{
+    width: 40px;
+    height:40px;
+}
+h1,h2,h3{
+    font-family: 'Montserrat';
+}
+p{
+    font-family: 'Libre Caslon Text';
 }

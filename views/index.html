@@ -1,4 +1,5 @@
 <!-- views/index.html -->
+<script src="javascript/app.js"></script>
 <div>
     <button onclick="filterBooks('to-read')">To Read</button>
     <button onclick="filterBooks('currently-reading')">Currently Reading</button>
@@ -16,22 +17,16 @@
     <p id="bookDescription"></p>
     <p id="bookStatus"></p>
     <p id="bookID" style="display: none"></p> <!-- Hidden element for the book ID -->
-
-    <!-- "Mark As" buttons -->
-    <button onclick="openMarkAsModal()">Mark As</button>
-
-    <!-- Modal for "Mark As" options -->
-    <div id="markAsModal" style="display: none">
-        <button onclick="markBookStatus('to read')">To Read</button>
-        <button onclick="markBookStatus('currently reading')">Currently Reading</button>
-        <button onclick="markBookStatus('read')">Read</button>
-        <button onclick="markBookStatus('did not finish')">Did Not Finish</button>
-    </div>
+    <button onclick="updateBookStatus('currently-reading')">Mark as Currently Reading</button>
+    <button onclick="updateBookStatus('read')">Mark as Read</button>
+    <button onclick="updateBookStatus('did-not-finish')">Mark as Did Not Finish</button>
+    <button onclick="updateBookStatus('to-read')">Mark as To Be Read</button>
+    <button onclick="deleteBook()">Delete</button>
 </div>
 
     {{ if .Books }}
         {{ range .Books }}
-            <div>
+            <div id="bookListContainer">
                 <p onclick="showBookDetails('{{ .ID }}')" style="cursor: pointer;">
                     {{ .Title }} by {{ .Author }}: {{ .Status }}
                 </p>
@@ -44,4 +39,4 @@
         </div>
     {{ end }}
 </div>
-<script src="../public/javascript/app.js"></script>
+
