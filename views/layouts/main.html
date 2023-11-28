@@ -1,0 +1,21 @@
+<!-- views/layouts/main.html -->
+<!DOCTYPE html>
+<head>
+    <title>my library</title>
+    <link rel="stylesheet" href="style/main.css?v=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+<body>
+    <div class="wrapper">
+        {{template "header" .}}
+            
+        <h1>{{.Title}}</h1>
+        <h2>
+            {{.Subtitle}}
+        </h2>
+        {{embed}}
+    </div>  
+    <script src="/javascript/app.js"></script>
+</body>
+</html>

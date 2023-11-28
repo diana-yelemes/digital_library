@@ -9,7 +9,12 @@ import (
 func GetAllBooks(c *fiber.Ctx) error {
 	var books []models.Book
 	database.DB.Db.Find(&books)
-	return c.JSON(books)
+
+	return c.Render("index", fiber.Map{
+		"Title":    "my library",
+		"Subtitle": "all of the books i own: ",
+		"Books":    books,
+	})
 }
 
 func GetBookDetails(c *fiber.Ctx) error {
@@ -79,6 +84,13 @@ func GetToBeReadList(c *fiber.Ctx) error {
 	return getBooksByStatus(c, "to read")
 }
 
+func NewBookView(c *fiber.Ctx) error {
+	return c.Render("new", fiber.Map{
+		"Title":    "New Book",
+		"Subtitle": "Create an addition to your library: ",
+	})
+}
+
 func AddNewBook(c *fiber.Ctx) error {
 	var newBook models.Book
 	if err := c.BodyParser(&newBook); err != nil {
@@ -86,7 +98,14 @@ func AddNewBook(c *fiber.Ctx) error {
 	}
 
 	database.DB.Db.Create(&newBook)
-	return c.JSON(newBook)
+	return ConfirmationView(c)
+}
+
+func ConfirmationView(c *fiber.Ctx) error {
+	return c.Render("confirmation", fiber.Map{
+		"Title":    "Book added successfully",
+		"Subtitle": "You can add more books to your library",
+	})
 }
 
 func UpdateBookDetails(c *fiber.Ctx) error {
@@ -114,16 +133,4 @@ func DeleteBook(c *fiber.Ctx) error {
 
 	c.SendStatus(fiber.StatusNoContent)
 	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book was deleted"})
-}
-
-func SearchBooks(c *fiber.Ctx) error {
-	query := c.Query("q")
-	var searchResults []models.Book
-	result := database.DB.Db.Where("SELECT * FROM books WHERE Title ILIKE ? OR Author ILIKE ?", "%"+query+"%", "%"+query+"%").Scan(&searchResults)
-
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
-	}
-
-	return c.JSON(searchResults)
 }

@@ -1,0 +1,47 @@
+<!-- views/index.html -->
+<div>
+    <button onclick="filterBooks('to-read')">To Read</button>
+    <button onclick="filterBooks('currently-reading')">Currently Reading</button>
+    <button onclick="filterBooks('read')">Read</button>
+    <button onclick="filterBooks('did-not-finish')">Did Not Finish</button>
+
+    <div id="bookList">
+        <!-- Book list will be displayed here -->
+    </div>
+
+    <!-- Book details container -->
+<div id="bookDetailsContainer" style="display: none">
+    <h3 id="bookTitle"></h3>
+    <p id="bookAuthor"></p>
+    <p id="bookDescription"></p>
+    <p id="bookStatus"></p>
+    <p id="bookID" style="display: none"></p> <!-- Hidden element for the book ID -->
+
+    <!-- "Mark As" buttons -->
+    <button onclick="openMarkAsModal()">Mark As</button>
+
+    <!-- Modal for "Mark As" options -->
+    <div id="markAsModal" style="display: none">
+        <button onclick="markBookStatus('to read')">To Read</button>
+        <button onclick="markBookStatus('currently reading')">Currently Reading</button>
+        <button onclick="markBookStatus('read')">Read</button>
+        <button onclick="markBookStatus('did not finish')">Did Not Finish</button>
+    </div>
+</div>
+
+    {{ if .Books }}
+        {{ range .Books }}
+            <div>
+                <p onclick="showBookDetails('{{ .ID }}')" style="cursor: pointer;">
+                    {{ .Title }} by {{ .Author }}: {{ .Status }}
+                </p>
+            </div>
+        {{ end }}
+    {{ else }}
+        <div>
+            <p>No books yet.</p>
+            <p><a href="/book">Add new</a></p>
+        </div>
+    {{ end }}
+</div>
+<script src="../public/javascript/app.js"></script>

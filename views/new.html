@@ -1,0 +1,29 @@
+<!-- views/new.html -->
+<form id="new-form" method="POST" action="/book">
+    <label for="title">
+        <span>Title</span>
+        <input id="title" type="text" name="title">
+    </label>
+
+    <label for="author">
+        <span>Author</span>
+        <input id="author" type="text" name="author">
+    </label>
+
+    <label for="description">
+        <span>Description</span>
+        <input id="description" type="text" name="description">
+    </label>
+
+    <label for="status">
+        <span>Status</span>
+        <select name="status" id="status">
+            <option value="to read">to read</option>
+            <option value="currently reading">currently reading</option>
+            <option value="read">read</option>
+            <option value="did not finish">did not finish</option>
+          </select>
+    </label>
+
+    <input type="submit" value="Submit">
+</form>
