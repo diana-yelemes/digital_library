@@ -1,6 +1,14 @@
     // public/javascript/app.js
     document.addEventListener('DOMContentLoaded', function () {
-    fetchBooks();
+        fetch('/')
+        .then(response => response.json())
+        .then(books => {
+          // Render the initial book list using Handlebars
+          const template = Handlebars.templates['bookList'];
+          const bookListHtml = template({ Books: books });
+          const bookListContainer = document.getElementById('bookList');
+          bookListContainer.innerHTML = bookListHtml;
+        });
 
     const ftbr=document.getElementById("fltrtbr");
     ftbr.addEventListener("click", () => filterBooks('to-be-read'));
@@ -158,6 +166,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
+
         // Function to update the book list on the page
         function updateBookList(books) {
             const bookListContainer = document.getElementById('bookList');

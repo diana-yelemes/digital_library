@@ -7,7 +7,20 @@
     <button id="fltrdnf">Did Not Finish</button>
 
     <div id="bookList">
-        <!-- Book list will be displayed here -->
+        {{ if .Books }}
+        {{ range .Books }}
+            <div class="book-list-container" data-book-id="{{ .ID }}">
+                <p style="cursor: pointer;">
+                    {{ .Title }} by {{ .Author }}: {{ .Status }}
+                </p>
+            </div>
+        {{ end }}
+    {{ else }}
+        <div>
+            <p>No books yet.</p>
+            <p><a href="/book">Add new</a></p>
+        </div>
+    {{ end }}
     </div>
 
     <!-- Book details container -->
@@ -24,18 +37,4 @@
     <button id="deletebtn">Delete</button>
 </div>
 
-    {{ if .Books }}
-        {{ range .Books }}
-            <div class="book-list-container" data-book-id="{{ .ID }}">
-                <p style="cursor: pointer;">
-                    {{ .Title }} by {{ .Author }}: {{ .Status }}
-                </p>
-            </div>
-        {{ end }}
-    {{ else }}
-        <div>
-            <p>No books yet.</p>
-            <p><a href="/book">Add new</a></p>
-        </div>
-    {{ end }}
 </div>
