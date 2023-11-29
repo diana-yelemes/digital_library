@@ -1,10 +1,10 @@
 <!-- views/index.html -->
 <script src="javascript/app.js"></script>
 <div>
-    <button onclick="filterBooks('to-read')">To Read</button>
-    <button onclick="filterBooks('currently-reading')">Currently Reading</button>
-    <button onclick="filterBooks('read')">Read</button>
-    <button onclick="filterBooks('did-not-finish')">Did Not Finish</button>
+    <button id="fltrtbr">To Read</button>
+    <button id="fltrcr">Currently Reading</button>
+    <button id="fltrread">Read</button>
+    <button id="fltrdnf">Did Not Finish</button>
 
     <div id="bookList">
         <!-- Book list will be displayed here -->
@@ -17,17 +17,17 @@
     <p id="bookDescription"></p>
     <p id="bookStatus"></p>
     <p id="bookID" style="display: none"></p> <!-- Hidden element for the book ID -->
-    <button onclick="updateBookStatus('currently-reading')">Mark as Currently Reading</button>
-    <button onclick="updateBookStatus('read')">Mark as Read</button>
-    <button onclick="updateBookStatus('did-not-finish')">Mark as Did Not Finish</button>
-    <button onclick="updateBookStatus('to-read')">Mark as To Be Read</button>
-    <button onclick="deleteBook()">Delete</button>
+    <button id="cr">Mark as Currently Reading</button>
+    <button id="read">Mark as Read</button>
+    <button id="dnf">Mark as Did Not Finish</button>
+    <button id="tbr">Mark as To Be Read</button>
+    <button id="deletebtn">Delete</button>
 </div>
 
     {{ if .Books }}
         {{ range .Books }}
-            <div id="bookListContainer">
-                <p onclick="showBookDetails('{{ .ID }}')" style="cursor: pointer;">
+            <div class="book-list-container" data-book-id="{{ .ID }}">
+                <p style="cursor: pointer;">
                     {{ .Title }} by {{ .Author }}: {{ .Status }}
                 </p>
             </div>
@@ -39,4 +39,3 @@
         </div>
     {{ end }}
 </div>
-

@@ -1,37 +1,78 @@
     // public/javascript/app.js
+    document.addEventListener('DOMContentLoaded', function () {
+    fetchBooks();
 
-    function filterBooks(status) {
-        // Make a GET request to the server to fetch the list of books with the given status
-        fetch(`/books/${status}-books`)
+    const ftbr=document.getElementById("fltrtbr");
+    ftbr.addEventListener("click", () => filterBooks('to-be-read'));
+
+    const fread=document.getElementById("fltrread");
+    fread.addEventListener("click", () => filterBooks('read'));
+
+    const fcr=document.getElementById("fltrcr");
+    fcr.addEventListener("click", () => filterBooks('currently-reading'));
+
+    const fdnf=document.getElementById("fltrdnf");
+    fdnf.addEventListener("click",() => filterBooks('did-not-finish'));
+
+    const mcr=document.getElementById("cr");
+    mcr.addEventListener("click",() => updateBookStatus('{{ .ID }}', 'currently-reading'));
+
+    const mread=document.getElementById("read");
+    mread.addEventListener("click",() => updateBookStatus('{{ .ID }}', 'read'));
+
+    const mdnf=document.getElementById("dnf");
+    mdnf.addEventListener("click", () => updateBookStatus('{{ .ID }}', 'did-not-finish'));
+
+    const mtbr=document.getElementById("tbr");
+    mtbr.addEventListener("click", () => updateBookStatus('{{ .ID }}', 'to-read'));
+
+    const dlt=document.getElementById("deletebtn");
+    dlt.addEventListener("click", () => deleteBook('{{ .ID }}'));
+
+
+    var bookListContainer = document.getElementById("bookList");
+    bookListContainer.addEventListener("click", function (event) {
+        // Check if the clicked element has the class "book-list-container"
+        if (event.target.classList.contains("book-list-container")) {
+            // Extract the book ID from the data attribute
+            const bookID = event.target.dataset.bookId;
+            // Call the showBookDetails function with the book ID
+            showBookDetails(bookID);
+        }
+    });
+
+        function filterBooks(status) {
+            // Make a GET request to the server to fetch the list of books with the given status
+            fetch(`/api/${status}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(books => {
-                // Get the bookListContainer div
-                var bookListContainer = document.getElementById("bookListContainer");
-
-                // Clear the current book list
-                bookListContainer.innerHTML = "";
-
+        
+                // Clear the existing book list
+                bookListContainer.innerHTML = '';
+        
                 // Add each book to the bookListContainer div
                 books.forEach(book => {
-                    var bookElement = document.createElement('div');
-                    bookElement.innerHTML = `
-                        <p>${book.Title} by ${book.Author}: ${book.Status}</p>
-                    `;
-                    bookListContainer.appendChild(bookElement);
+                var bookElement = document.createElement('div');
+                bookElement.innerHTML = `
+                    <p>${book.title} by ${book.author}: ${book.status}</p>
+                `;
+        
+                bookListContainer.appendChild(bookElement);
                 });
             })
             .catch(error => console.error('Error:', error));
-    }
+        }
+        
 
 
         // Function to show book details
         function showBookDetails(bookID) {
-            fetch(`/api/books/${bookID}`)
+        fetch(`/api/books/${bookID}`)
                 .then(response => response.json())
                 .then(book => {
                     const bookDetailsContainer = document.getElementById('bookDetailsContainer');
@@ -53,9 +94,9 @@
                 .catch(error => console.error('Error fetching book details:', error));
         }
 
+
         // Function to update book status
         async function updateBookStatus(bookID, status) {
-            const bookID = document.getElementById("bookID").innerText;
         
             const response = await fetch(`/api/books/${bookID}/${status}`, { method: "POST" });
         
@@ -85,7 +126,7 @@
                             <p onclick="showBookDetails('${book.ID}')">${book.Title} by ${book.Author}: ${book.Status}</p>
                             <button class="mark-as-button" onclick="displayStatusOptions(${book.ID})">Mark As</button>
                             <div id="status-options-${book.ID}" class="status-options" style="display: none;">
-                                <button onclick="markBookStatus(${book.ID}, 'to-read')">To Read</button>
+                                <button onclick="markBookStatus(${book.ID}, 'to-be-read')">To Be Read</button>
                                 <button onclick="markBookStatus(${book.ID}, 'currently-reading')">Currently Reading</button>
                                 <button onclick="markBookStatus(${book.ID}, 'read')">Read</button>
                                 <button onclick="markBookStatus(${book.ID}, 'did-not-finish')">Did Not Finish</button>
@@ -99,9 +140,7 @@
         
 
         // Function to delete a book
-        function deleteBook() {
-            // Get the book ID
-            var bookID = document.getElementById("bookID").textContent;
+        function deleteBook(bookID) {
         
             // Make a DELETE request to the server
             fetch(`/api/books/${bookID}`, {
@@ -143,3 +182,4 @@
                 bookListContainer.innerHTML = '<p>No books found.</p>';
             }
         };
+    });

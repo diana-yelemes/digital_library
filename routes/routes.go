@@ -18,7 +18,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/api/books/:bookID/currently-reading", handlers.MarkAsCurrentlyReading)
 
 	// Mark as Read
-	app.Post("/api/books/:bookID/mark-as-read", handlers.MarkAsRead)
+	app.Post("/api/books/:bookID/read", handlers.MarkAsRead)
 
 	// Mark as Did Not Finish
 	app.Post("/api/books/:bookID/did-not-finish", handlers.MarkAsDidNotFinish)
@@ -27,16 +27,16 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/api/books/:bookID/to-be-read", handlers.MarkAsToBeRead)
 
 	// Get Currently Reading List
-	app.Get("/api/books/currently-reading-books", handlers.GetCurrentlyReadingList)
+	app.Get("/api/currently-reading", handlers.GetCurrentlyReadingBooks)
 
 	// Get Read Books List
-	app.Get("/api/books/read-books", handlers.GetReadBooksList)
+	app.Get("/api/read", handlers.GetReadBooks)
 
 	// Get Did Not Finish List
-	app.Get("/api/books/did-not-finish-books", handlers.GetDidNotFinishList)
+	app.Get("/api/did-not-finish", handlers.GetDidNotFinishBooks)
 
-	// Get To Be Read List
-	app.Get("/api/books/to-be-read-books", handlers.GetToBeReadList)
+	// Get To Read List
+	app.Get("/api/to-be-read", handlers.GetToBeReadBooks)
 
 	// Add New Book
 	app.Post("/book", handlers.AddNewBook)

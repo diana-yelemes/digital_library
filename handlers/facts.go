@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/diana-yelemes/digital_library/database"
 	"github.com/diana-yelemes/digital_library/models"
 	"github.com/gofiber/fiber/v2"
@@ -62,28 +64,80 @@ func markBookStatus(c *fiber.Ctx, status string) error {
 	return c.JSON(book)
 }
 
-func getBooksByStatus(c *fiber.Ctx, status string) error {
+func GetBooksByStatus(c *fiber.Ctx, status string) error {
+	fmt.Println("Status:", status)
+
 	var books []models.Book
-	database.DB.Db.Where("status = ?", status).Find(&books)
+
+	// Construct the SQL query dynamically using the status parameter
+	sql := "SELECT * FROM books WHERE status = '" + status + "' AND deleted_at IS NULL ORDER BY id"
+
+	// Execute the dynamically constructed SQL query
+	err := database.DB.Db.Raw(sql).Find(&books).Error
+	if err != nil {
+		fmt.Println("Error fetching books by status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
 	return c.JSON(books)
 }
 
-func GetCurrentlyReadingList(c *fiber.Ctx) error {
-	return getBooksByStatus(c, "currently reading")
+func GetToBeReadBooks(c *fiber.Ctx) error {
+	var books []models.Book
+
+	sql := "SELECT * FROM books WHERE status = $1 AND deleted_at IS NULL ORDER BY id"
+	err := database.DB.Db.Raw(sql, "to-be-read").Find(&books).Error
+
+	if err != nil {
+		fmt.Println("Error fetching books by status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
+	return c.JSON(books)
 }
 
-func GetReadBooksList(c *fiber.Ctx) error {
-	return getBooksByStatus(c, "read")
+func GetCurrentlyReadingBooks(c *fiber.Ctx) error {
+	var books []models.Book
+
+	sql := "SELECT * FROM books WHERE status = $1 AND deleted_at IS NULL ORDER BY id"
+	err := database.DB.Db.Raw(sql, "currently-reading").Find(&books).Error
+
+	if err != nil {
+		fmt.Println("Error fetching books by status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
+	return c.JSON(books)
 }
 
-func GetDidNotFinishList(c *fiber.Ctx) error {
-	return getBooksByStatus(c, "did not finish")
+func GetReadBooks(c *fiber.Ctx) error {
+	var books []models.Book
+
+	sql := "SELECT * FROM books WHERE status = $1 AND deleted_at IS NULL ORDER BY id"
+	err := database.DB.Db.Raw(sql, "read").Find(&books).Error
+
+	if err != nil {
+		fmt.Println("Error fetching books by status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
+	return c.JSON(books)
 }
 
-func GetToBeReadList(c *fiber.Ctx) error {
-	return getBooksByStatus(c, "to read")
-}
+func GetDidNotFinishBooks(c *fiber.Ctx) error {
+	fmt.Println("Status:", "did-not-finish")
 
+	var books []models.Book
+	sql := "SELECT * FROM books WHERE status = ? AND books.deleted_at IS NULL ORDER BY id"
+
+	err := database.DB.Db.Raw(sql, "did-not-finish").Find(&books).Error
+	if err != nil {
+		fmt.Println("Error fetching books by status:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
+	}
+
+	return c.JSON(books)
+}
 func NewBookView(c *fiber.Ctx) error {
 	return c.Render("new", fiber.Map{
 		"Title":    "New Book",
