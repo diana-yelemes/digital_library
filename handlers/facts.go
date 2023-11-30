@@ -12,6 +12,7 @@ func GetAllBooks(c *fiber.Ctx) error {
 	var books []models.Book
 	database.DB.Db.Find(&books)
 
+	// Return HTML response
 	return c.Render("index", fiber.Map{
 		"Title":    "my library",
 		"Subtitle": "all of the books i own: ",
@@ -152,13 +153,16 @@ func AddNewBook(c *fiber.Ctx) error {
 	}
 
 	database.DB.Db.Create(&newBook)
-	return ConfirmationView(c)
+	// Customize the confirmation message for book addition
+	title := "Book added successfully"
+	subtitle := "You can add more books to your library"
+	return ConfirmationView(c, title, subtitle)
 }
 
-func ConfirmationView(c *fiber.Ctx) error {
+func ConfirmationView(c *fiber.Ctx, title, subtitle string) error {
 	return c.Render("confirmation", fiber.Map{
-		"Title":    "Book added successfully",
-		"Subtitle": "You can add more books to your library",
+		"Title":    title,
+		"Subtitle": subtitle,
 	})
 }
 
@@ -185,6 +189,8 @@ func DeleteBook(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book not found"})
 	}
 
-	c.SendStatus(fiber.StatusNoContent)
-	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Book was deleted"})
+	// Customize the confirmation message for book deletion
+	title := "Book deleted successfully"
+	subtitle := "You can manage your library"
+	return ConfirmationView(c, title, subtitle)
 }
