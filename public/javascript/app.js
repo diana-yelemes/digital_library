@@ -14,22 +14,27 @@
     const fdnf=document.getElementById("fltrdnf");
     fdnf.addEventListener("click",() => filterBooks('did-not-finish'));
 
-
     document.getElementById('bookList').addEventListener('click', (event) => {
-        const button = event.target.closest('.mark-as-button');
-        if (button) {
-            const bookID = button.dataset.bookid;
-            const status = button.dataset.status;
+        const clickedBookElement = event.target.closest('.book-list-container');
+        if (!clickedBookElement) return;
+    
+        // Read book ID from the clicked book element
+        const bookID = clickedBookElement.dataset.bookId;
+    
+        // Handle "Mark As" button clicks
+        const markAsButton = event.target.closest('.mark-as-button');
+        if (markAsButton) {
+            const status = markAsButton.dataset.status;
             updateBookStatus(bookID, status);
         }
     
+        // Handle "Delete" button clicks
         const deleteButton = event.target.closest('.delete-button');
         if (deleteButton) {
-            const bookID = deleteButton.dataset.bookid;
             deleteBook(bookID);
         }
     });
-    
+      
 
 
     function fetchBooks(){
@@ -63,27 +68,6 @@
                 }
             });
         
-            // Add click event listeners to "Mark As" buttons
-            const markAsButtons = currentBookListContainer.querySelectorAll('.mark-as-button');
-            markAsButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const clickedBookID = button.dataset.bookId;
-                    const status = button.dataset.status;
-                    updateBookStatus(clickedBookID, status);
-                });
-            });
-
-            // Add click event listener to "Delete" button for each book
-            const deleteButtons = currentBookListContainer.querySelectorAll('.delete-button');
-            deleteButtons.forEach(deleteButton => {
-                deleteButton.addEventListener('click', function (event) {
-                    const bookElement = event.target.closest('.book-list-container');
-                    if (bookElement) {
-                        const bookID = bookElement.dataset.bookId;
-                        deleteBook(bookID);
-                    }
-                });
-            });
 
         } else {
             console.error('Book list container not found in the received HTML.');

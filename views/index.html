@@ -17,13 +17,13 @@
                  <p><span id="bookDescription"></span></p>
                  <p>Status: <span id="bookStatus"></span></p>
                  <p>ID: <span id="bookID"></span></p>
-                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="currently-reading">Currently Reading</button>
-                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="read">Read</button>
-                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="did-not-finish">Did Not Finish</button>
-                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="to-be-read">To Be Read</button>
-                 <button class="delete-button" data-bookid="{{ .ID }}">Delete</button>
+                 <button class="mark-as-button" data-book-id="{{ .ID }}" data-status="currently-reading">Currently Reading</button>
+                 <button class="mark-as-button" data-book-id="{{ .ID }}" data-status="read">Read</button>
+                 <button class="mark-as-button" data-book-id="{{ .ID }}" data-status="did-not-finish">Did Not Finish</button>
+                 <button class="mark-as-button" data-book-id="{{ .ID }}" data-status="to-be-read">To Be Read</button>
+                 <button class="delete-button" data-book-id="{{ .ID }}">Delete</button>
             </div>
-                <p style="cursor: pointer;">
+                <p class="books-on-page">
                     {{ .Title }} by {{ .Author }}: {{ .Status }}
                 </p>
             </div>
