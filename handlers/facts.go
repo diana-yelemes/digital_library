@@ -31,7 +31,7 @@ func GetBookDetails(c *fiber.Ctx) error {
 }
 
 func MarkAsCurrentlyReading(c *fiber.Ctx) error {
-	return markBookStatus(c, "currently reading")
+	return markBookStatus(c, "currently-reading")
 }
 
 func MarkAsRead(c *fiber.Ctx) error {
@@ -39,11 +39,11 @@ func MarkAsRead(c *fiber.Ctx) error {
 }
 
 func MarkAsDidNotFinish(c *fiber.Ctx) error {
-	return markBookStatus(c, "did not finish")
+	return markBookStatus(c, "did-not-finish")
 }
 
 func MarkAsToBeRead(c *fiber.Ctx) error {
-	return markBookStatus(c, "to read")
+	return markBookStatus(c, "to-be-read")
 }
 
 func markBookStatus(c *fiber.Ctx, status string) error {

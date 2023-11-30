@@ -1,6 +1,39 @@
     // public/javascript/app.js
     document.addEventListener('DOMContentLoaded', function () {
-          // Fetch the initial HTML content
+        fetchBooks();
+
+    const ftbr=document.getElementById("fltrtbr");
+    ftbr.addEventListener("click", () => filterBooks('to-be-read'));
+
+    const fread=document.getElementById("fltrread");
+    fread.addEventListener("click", () => filterBooks('read'));
+
+    const fcr=document.getElementById("fltrcr");
+    fcr.addEventListener("click", () => filterBooks('currently-reading'));
+
+    const fdnf=document.getElementById("fltrdnf");
+    fdnf.addEventListener("click",() => filterBooks('did-not-finish'));
+
+
+    document.getElementById('bookList').addEventListener('click', (event) => {
+        const button = event.target.closest('.mark-as-button');
+        if (button) {
+            const bookID = button.dataset.bookid;
+            const status = button.dataset.status;
+            updateBookStatus(bookID, status);
+        }
+    
+        const deleteButton = event.target.closest('.delete-button');
+        if (deleteButton) {
+            const bookID = deleteButton.dataset.bookid;
+            deleteBook(bookID);
+        }
+    });
+    
+
+
+    function fetchBooks(){
+        // Fetch the initial HTML content
     fetch('/')
     .then(response => {
         if (!response.ok) {
@@ -20,7 +53,7 @@
             // Update the existing book list container with the received HTML content
             const currentBookListContainer = document.getElementById('bookList');
             currentBookListContainer.innerHTML = bookListContainer.innerHTML;
-
+        
             // Add click event listeners to each book element
             currentBookListContainer.addEventListener('click', (event) => {
                 const bookElement = event.target.closest('.book-list-container');
@@ -29,60 +62,38 @@
                     showBookDetails(bookID);
                 }
             });
+        
+            // Add click event listeners to "Mark As" buttons
+            const markAsButtons = currentBookListContainer.querySelectorAll('.mark-as-button');
+            markAsButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const clickedBookID = button.dataset.bookid;
+                    const status = button.dataset.status;
+                    updateBookStatus(clickedBookID, status);
+                });
+            });
+
+            // Add click event listener to "Delete" button for each book
+            const deleteButtons = currentBookListContainer.querySelectorAll('.delete-button');
+            deleteButtons.forEach(deleteButton => {
+                deleteButton.addEventListener('click', function (event) {
+                    const bookElement = event.target.closest('.book-list-container');
+                    if (bookElement) {
+                        const bookID = bookElement.dataset.bookId;
+                        deleteBook(bookID);
+                    }
+                });
+            });
+
         } else {
             console.error('Book list container not found in the received HTML.');
         }
+        
     })
     .catch(error => console.error('Error:', error));
 
 
-
-    const ftbr=document.getElementById("fltrtbr");
-    ftbr.addEventListener("click", () => filterBooks('to-be-read'));
-
-    const fread=document.getElementById("fltrread");
-    fread.addEventListener("click", () => filterBooks('read'));
-
-    const fcr=document.getElementById("fltrcr");
-    fcr.addEventListener("click", () => filterBooks('currently-reading'));
-
-    const fdnf=document.getElementById("fltrdnf");
-    fdnf.addEventListener("click",() => filterBooks('did-not-finish'));
-
-    const mcr=document.getElementById("cr");
-    mcr.addEventListener("click",(event) => {
-        const bookElement = event.target.closest('.book-list-container');
-        if (bookElement) {
-            const bookID = bookElement.dataset.bookId;
-            updateBookStatus(bookID, 'currently-reading');
-        }
-    });
-
-    const mread=document.getElementById("read");
-    mread.addEventListener("click",() => {
-        const bookID = this.dataset.bookId; 
-        updateBookStatus(bookID, 'read');
-    });
-
-    const mdnf=document.getElementById("dnf");
-    mdnf.addEventListener("click", () => {
-        const bookID = this.dataset.bookId;
-        updateBookStatus(bookID, 'did-not-finish');
-    });
-
-    const mtbr=document.getElementById("tbr");
-    mtbr.addEventListener("click", () => {
-        const bookID = this.dataset.bookId;
-        updateBookStatus(bookID, 'to-read');
-    });
-
-    const dlt=document.getElementById("deletebtn");
-    dlt.addEventListener("click", () => {
-        const bookID = this.dataset.bookId;
-        deleteBook(bookID);
-    });
-
-
+    }
         function filterBooks(status) {
             var bookListContainer = document.getElementById("bookList");
             // Make a GET request to the server to fetch the list of books with the given status
@@ -150,39 +161,8 @@
             }
         }
 
-        function fetchBooks() {
-            // Make a GET request to the server to fetch the list of books
-            fetch('/')
-                .then(response => response.json())
-                .then(books => {
-
-        
-                    // Clear the current book list
-                    bookListContainer.innerHTML = "";
-        
-                    // Add each book to the bookListContainer div
-                    books.forEach(book => {
-                        var bookElement = document.createElement('div');
-                        bookElement.innerHTML = `
-                            <p onclick="showBookDetails('${book.ID}')">${book.Title} by ${book.Author}: ${book.Status}</p>
-                            <button class="mark-as-button" onclick="displayStatusOptions(${book.ID})">Mark As</button>
-                            <div id="status-options-${book.ID}" class="status-options" style="display: none;">
-                                <button onclick="markBookStatus(${book.ID}, 'to-be-read')">To Be Read</button>
-                                <button onclick="markBookStatus(${book.ID}, 'currently-reading')">Currently Reading</button>
-                                <button onclick="markBookStatus(${book.ID}, 'read')">Read</button>
-                                <button onclick="markBookStatus(${book.ID}, 'did-not-finish')">Did Not Finish</button>
-                            </div>
-                        `;
-                        bookListContainer.appendChild(bookElement);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
-        
-
         // Function to delete a book
         function deleteBook(bookID) {
-        
             // Make a DELETE request to the server
             fetch(`/api/books/${bookID}`, {
                 method: 'DELETE'
@@ -191,7 +171,8 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                // Don't need to parse response as JSON in this case
+                return response.text();
             })
             .then(() => {
                 // Refresh the book list
@@ -199,6 +180,7 @@
             })
             .catch(error => console.error('Error:', error));
         }
+        
 
         // Function to update the book list on the page
         function updateBookList(books) {
@@ -212,16 +194,45 @@
                         <p onclick="showBookDetails('${book.ID}')" style="cursor: pointer;">
                             ${book.Title} by ${book.Author}: ${book.Status}
                         </p>
-                        <button onclick="updateBookStatus('${book.ID}', 'currently-reading')">Currently Reading</button>
-                        <button onclick="updateBookStatus('${book.ID}', 'read')">Mark as Read</button>
-                        <button onclick="updateBookStatus('${book.ID}', 'did-not-finish')">Did Not Finish</button>
-                        <button onclick="updateBookStatus('${book.ID}', 'to-be-read')">To Be Read</button>
+                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="currently-reading">Currently Reading</button>
+                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="read">Mark as Read</button>
+                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="did-not-finish">Did Not Finish</button>
+                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="to-be-read">To Be Read</button>
+                        <button class="delete-button" data-bookid="${book.ID}">Delete</button>
                     `;
 
-                    bookListContainer.appendChild(bookDiv);
+                    bookListContainer.appendChild(bookDiv); 
                 });
             } else {
                 bookListContainer.innerHTML = '<p>No books found.</p>';
             }
         };
+        const newForm = document.getElementById('new-form');
+
+        newForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Create a FormData object from the form
+        const formData = new FormData(newForm);
+
+        // Make a POST request to the server
+        fetch('/book', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the response data, if needed
+            console.log('Book added successfully:', data);
+            
+          
+            window.location.href = '/books'; // Redirect to the book list page
+        })
+        .catch(error => console.error('Error:', error));
+    });
     })

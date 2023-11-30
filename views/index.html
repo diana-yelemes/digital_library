@@ -10,6 +10,19 @@
         {{ if .Books }}
         {{ range .Books }}
             <div class="book-list-container" data-book-id="{{ .ID }}">
+                 <!-- Book details container -->
+            <div id="bookDetailsContainer" style="display: none">
+                 <h3><span id="bookTitle"></span></h3>
+                 <p><span id="bookAuthor"></span></p>
+                 <p><span id="bookDescription"></span></p>
+                 <p>Status: <span id="bookStatus"></span></p>
+                 <p>ID: <span id="bookID"></span></p>
+                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="currently-reading">Currently Reading</button>
+                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="read">Read</button>
+                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="did-not-finish">Did Not Finish</button>
+                 <button class="mark-as-button" data-bookid="{{ .ID }}" data-status="to-be-read">To Be Read</button>
+                 <button class="delete-button" data-bookid="{{ .ID }}">Delete</button>
+            </div>
                 <p style="cursor: pointer;">
                     {{ .Title }} by {{ .Author }}: {{ .Status }}
                 </p>
@@ -21,20 +34,8 @@
             <p><a href="/book">Add new</a></p>
         </div>
     {{ end }}
+    
     </div>
 
-    <!-- Book details container -->
-    <div id="bookDetailsContainer" style="display: none">
-        <h3><span id="bookTitle"></span></h3>
-        <p><span id="bookAuthor"></span></p>
-        <p><span id="bookDescription"></span></p>
-        <p>Status: <span id="bookStatus"></span></p>
-        <p>ID: <span id="bookID"></span></p>
-        <button id="cr">Mark as Currently Reading</button>
-        <button id="read">Mark as Read</button>
-        <button id="dnf">Mark as Did Not Finish</button>
-        <button id="tbr">Mark as To Be Read</button>
-        <button id="deletebtn">Delete</button>
-      </div>
 
 </div>
