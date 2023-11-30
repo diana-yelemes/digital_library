@@ -67,7 +67,7 @@
             const markAsButtons = currentBookListContainer.querySelectorAll('.mark-as-button');
             markAsButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    const clickedBookID = button.dataset.bookid;
+                    const clickedBookID = button.dataset.bookId;
                     const status = button.dataset.status;
                     updateBookStatus(clickedBookID, status);
                 });
@@ -183,30 +183,35 @@
         
 
         // Function to update the book list on the page
-        function updateBookList(books) {
-            const bookListContainer = document.getElementById('bookList');
-            bookListContainer.innerHTML = '';
+            function updateBookList(books) {
+                const bookListContainer = document.getElementById('bookList');
+                bookListContainer.innerHTML = '';
 
-            if (books.length > 0) {
-                books.forEach(book => {
-                    const bookDiv = document.createElement('div');
-                    bookDiv.innerHTML = `
-                        <p onclick="showBookDetails('${book.ID}')" style="cursor: pointer;">
-                            ${book.Title} by ${book.Author}: ${book.Status}
-                        </p>
-                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="currently-reading">Currently Reading</button>
-                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="read">Mark as Read</button>
-                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="did-not-finish">Did Not Finish</button>
-                        <button class="mark-as-button" data-bookid="${book.ID}" data-status="to-be-read">To Be Read</button>
-                        <button class="delete-button" data-bookid="${book.ID}">Delete</button>
-                    `;
+                if (books.length > 0) {
+                    books.forEach(book => {
+                        const bookDiv = document.createElement('div');
+                        const bookID = book.ID;
 
-                    bookListContainer.appendChild(bookDiv); 
-                });
-            } else {
-                bookListContainer.innerHTML = '<p>No books found.</p>';
-            }
-        };
+                        bookDiv.innerHTML = `
+                            <p onclick="showBookDetails('${bookID}')" style="cursor: pointer;">
+                                ${book.Title} by ${book.Author}: ${book.Status}
+                            </p>
+                            <button class="mark-as-button" data-bookid="${bookID}" data-status="currently-reading">Currently Reading</button>
+                            <button class="mark-as-button" data-bookid="${bookID}" data-status="read">Mark as Read</button>
+                            <button class="mark-as-button" data-bookid="${bookID}" data-status="did-not-finish">Did Not Finish</button>
+                            <button class="mark-as-button" data-bookid="${bookID}" data-status="to-be-read">To Be Read</button>
+                            <button class="delete-button" data-bookid="${bookID}">Delete</button>
+                        `;
+
+                        bookListContainer.appendChild(bookDiv);
+                    });
+                } else {
+                    bookListContainer.innerHTML = '<p>No books found.</p>';
+                }
+            };
+
+
+
         const newForm = document.getElementById('new-form');
 
         newForm.addEventListener('submit', function (event) {
